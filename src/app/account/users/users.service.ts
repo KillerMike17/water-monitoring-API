@@ -24,7 +24,7 @@ export class UserService extends MongoGenericRepository<User> {
 
   public async createUser(createDto: CreateUsers): Promise<Resp<User>> {
     // organization members must have organization id
-    createDto.accountStatus = ACCOUNT_STATUS.JUST_CREATED;
+    createDto.accountStatus = ACCOUNT_STATUS.PENDING;
 
     createDto.password = await this.cryptoService.createHash(createDto.password);
     return this.createOne(createDto);

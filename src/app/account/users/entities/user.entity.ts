@@ -6,7 +6,7 @@ import { ApiHideProperty } from '@nestjs/swagger';
 
 import { RoleType } from '@/shared/models';
 
-import { ACCOUNT_STATUS, GENDER } from '../../profile/dto/profile.dto';
+import { ACCOUNT_STATUS, GENDER, SPECIALIZATIONS } from '../../profile/dto/profile.dto';
 
 export const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
@@ -86,9 +86,6 @@ export class User {
    * ===================================================
    */
 
-  @Prop({ type: Date })
-  lastCheckin?: Date;
-
   @ApiHideProperty()
   @Prop({ required: false, select: false })
   encryptedPwd: string;
@@ -104,6 +101,15 @@ export class User {
     enum: Object.values(ACCOUNT_STATUS),
   })
   accountStatus: ACCOUNT_STATUS;
+
+  @Prop({ type: String })
+  refNo?: string;
+
+  @Prop({ type: String })
+  address?: string;
+
+  @Prop({ type: String, enum: Object.values(SPECIALIZATIONS) })
+  specialization?: SPECIALIZATIONS;
 }
 
 export type UserDocument = User & Document;

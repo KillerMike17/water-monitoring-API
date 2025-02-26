@@ -91,9 +91,7 @@ export class customerFillProfile {
   assessmentStatus?: boolean;
 }
 
-export class UpdateMe extends PartialType(
-  PickType(customerFillProfile, ['avatar', 'favAnimal', 'favSubj', 'hobby']),
-) {}
+export class UpdateMe extends PartialType(PickType(customerFillProfile, ['avatar'])) {}
 
 export class customerQuery extends PaginationInputs {
   @IsOptional()
@@ -104,5 +102,23 @@ export class customerQuery extends PaginationInputs {
 }
 
 export enum ACCOUNT_STATUS {
-  JUST_CREATED = 'JUST_CREATED',
+  ACTIVE = 'ACTIVE',
+  PENDING = 'PENDING',
+  REJECTED = 'REJECTED',
+}
+
+export enum PAYMENTSTATUS {
+  PAID = 'PAID',
+  NOTPIAD = 'NOTPAID',
+}
+
+export enum SPECIALIZATIONS {
+  SENSOR = 'SENSOR',
+  Hardware = 'hardware',
+}
+
+export enum STATUS {
+  SUCCESSFULL = 'successfull',
+  PENDING = 'pending',
+  UNSUCCESSFULL = 'unsuccessfull',
 }

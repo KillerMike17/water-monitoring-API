@@ -1,6 +1,7 @@
 export enum RoleType {
   Customer = 'CUSTOMER',
   ADMIN = 'ADMIN',
+  TECHNICIAN = 'TECHNICIAN',
 }
 
 export class UserFromToken {

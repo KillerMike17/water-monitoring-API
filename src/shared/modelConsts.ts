@@ -3,4 +3,9 @@ export enum Endpoint {
   Users = 'users',
   Auth = 'auth',
   Profile = 'profile',
+
+  //monitoring
+  Billing = 'billing',
+  Ticket = 'ticket',
+  Payment = 'payment',
 }
