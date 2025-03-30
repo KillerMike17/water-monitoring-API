@@ -4,9 +4,14 @@ import { TicketsController } from './ticket.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Ticket, TicketSchema } from './ticket.entity';
 import { UsersModule } from '@/app/account/users';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Ticket.name, schema: TicketSchema }]), UsersModule],
+  imports: [
+    MongooseModule.forFeature([{ name: Ticket.name, schema: TicketSchema }]),
+    UsersModule,
+    NotificationModule,
+  ],
   controllers: [TicketsController],
   providers: [ticketService],
   exports: [ticketService],

@@ -99,6 +99,9 @@ export class CreateUsers extends RegisterUserInput {
 
   @IsOptional()
   accountStatus?: ACCOUNT_STATUS;
+
+  @IsOptional()
+  uuid?: string;
 }
 
 export class FilterUser extends PartialType(OmitType(RegisterUserInput, ['password'])) {

@@ -5,6 +5,12 @@ import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
 import { Document } from 'mongoose';
 
+export enum TICKETSTATUS {
+  PENDING = 'Pending',
+  INPROGRESS = 'InProgress',
+  RESOLVED = 'Resolved',
+}
+
 @Schema()
 export class Ticket {
   @ApiProperty({ name: 'id' })
@@ -18,10 +24,18 @@ export class Ticket {
   @Prop({ type: String })
   userId: string;
 
+  @IsString()
+  @Prop({ type: String })
+  technicianId: string;
+
   @IsNotEmpty()
-  @IsNumber()
   @Prop({ type: String, enum: Object.values(SPECIALIZATIONS) })
   type: SPECIALIZATIONS;
+
+  @IsNotEmpty()
+  @IsString()
+  @Prop({ type: String, enum: Object.values(TICKETSTATUS) })
+  status: TICKETSTATUS;
 }
 
 export type TicketDocument = Ticket & Document;

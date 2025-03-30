@@ -52,7 +52,7 @@ export class User {
   })
   role: RoleType = RoleType.Customer;
 
-  @Prop({ type: String, required: false })
+  @Prop({ type: Boolean, required: false })
   active: boolean;
 
   //=======================  other models related
@@ -104,6 +104,9 @@ export class User {
 
   @Prop({ type: String })
   refNo?: string;
+
+  @Prop({ type: String })
+  uuid?: string;
 
   @Prop({ type: String })
   address?: string;
