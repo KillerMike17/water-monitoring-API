@@ -45,10 +45,10 @@ export class NotificationController {
 
   @Patch(':id')
   @UseGuards(JwtGuard)
-  @Roles(RoleType.ADMIN, RoleType.KID)
+  @Roles(RoleType.ADMIN)
   async update(@Req() req: Request, @Param('id') id: string, @Body() updateDto: UpdateDto) {
     const user: UserFromToken = req['user'];
-    if (user.role == RoleType.KID) {
+    if (user.role == RoleType.Customer) {
       const res = await this.notificationService.findById(id);
       if (!res.ok) throw new HttpException(res.errMessage, res.code);
 
@@ -73,13 +73,13 @@ export class NotificationController {
   // == below queries dont need authentication
   @Get()
   @UseGuards(JwtGuard)
-  @Roles(RoleType.ADMIN, RoleType.KID)
+  @Roles(RoleType.ADMIN)
   async filterAndPaginate(
     @Req() req: Request,
     @Query() inputQuery: NotificationQuery,
   ): Promise<PaginatedRes<Notification>> {
     const user: UserFromToken = req['user'];
-    if (user.role == RoleType.KID) {
+    if (user.role == RoleType.Customer) {
       inputQuery.userId = user._id;
     }
     const paginateQuery = pickKeys(inputQuery, [...pagiKeys]);
@@ -97,19 +97,19 @@ export class NotificationController {
 
   @Get(':id')
   @UseGuards(JwtGuard)
-  @Roles(RoleType.ADMIN, RoleType.KID)
+  @Roles(RoleType.ADMIN)
   async findOne(@Req() req: Request, @Param('id') id: string) {
     const user: UserFromToken = req['user'];
     const res = await this.notificationService.findById(id);
     if (!res.ok) throw new HttpException(res.errMessage, res.code);
-    if (user.role == RoleType.KID && res.val.userId !== user._id) {
+    if (user.role == RoleType.Customer && res.val.userId !== user._id) {
       throw new HttpException('Unauthorized', 403);
     }
     return res.val;
   }
 
   @Post('mark_read')
-  @Roles(RoleType.KID, RoleType.ADMIN)
+  @Roles(RoleType.Customer, RoleType.ADMIN)
   @UseGuards(JwtGuard)
   async markAsRead(@Req() req: Request, @Body() input: markReadDto): Promise<any> {
     // Mark a single notification as unread
@@ -121,7 +121,7 @@ export class NotificationController {
     }
     const user: UserFromToken = req['user'];
 
-    if (user.role == RoleType.KID && notif.val.userId !== user._id) {
+    if (user.role == RoleType.Customer && notif.val.userId !== user._id) {
       throw new HttpException('Unauthorized', 403);
     }
 

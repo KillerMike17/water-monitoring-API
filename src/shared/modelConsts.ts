@@ -8,4 +8,5 @@ export enum Endpoint {
   Billing = 'billing',
   Ticket = 'ticket',
   Payment = 'payment',
+  Notification = 'notification',
 }
