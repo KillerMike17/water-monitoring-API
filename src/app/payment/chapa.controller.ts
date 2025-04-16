@@ -36,7 +36,7 @@ export class ChapaController {
     //--------  Getting user data
     const user: UserFromToken = req['user'];
 
-    const paymentData = await this.paymentServ.getPaymentData(createDto, user, createDto.currency);
+    const paymentData = await this.paymentServ.getPaymentData(createDto.uuid);
     const tx_ref = await this.chapaService.generateTransactionReference();
     // logTrace('found tx_ref', tx_ref);
     const response = await this.chapaService.initialize({
@@ -44,7 +44,7 @@ export class ChapaController {
       last_name: createDto.last_name,
       email: createDto.email,
       currency: createDto.currency,
-      amount: `${paymentData.amount}`,
+      amount: `${paymentData.val.amount}`,
       tx_ref: tx_ref,
       // callback_url: 'https://2d6a-102-213-69-203.ngrok-free.app/Payments/hook2',
       return_url: `https://water-monitoring-api-k06t.onrender.com/payment/status?tx_ref=${tx_ref}`,
@@ -55,7 +55,7 @@ export class ChapaController {
     });
 
     const data: PaymentInput = {
-      amount: paymentData.amount,
+      amount: paymentData.val.amount,
       checkout_url: response.data.checkout_url,
       tx_ref: tx_ref,
       userId: user._id,

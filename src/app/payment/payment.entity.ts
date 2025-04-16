@@ -77,6 +77,14 @@ export class BasePayment {
   paymentMadeBy?: PaymentMadeBy;
 }
 
+export interface PaymentBill {
+  uuid: string;
+  userId: string;
+  amount: number;
+  dueDate: string;
+  status: PaymentStatus;
+}
+
 @Schema()
 export class Payment extends BasePayment {
   @ApiProperty({ name: 'id' })

@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 
-import { Payment, PaymentDocument, PaymentDto } from './payment.entity';
+import { Payment, PaymentBill, PaymentDocument, PaymentDto, PaymentStatus } from './payment.entity';
 
 import { MongoGenericRepository } from '@/providers/database/base/mongo.base.repo';
 import mongoose, { Model } from 'mongoose';
 import { UserService } from '@/app/account/users/users.service';
 import { UserFromToken } from '@/shared/models';
+import { Resp } from '@/common/constants/return.const';
+import { billingService } from '../monitoring/billing/billing.service';
 
 @Injectable()
 export class paymentService extends MongoGenericRepository<Payment> {
@@ -14,17 +16,78 @@ export class paymentService extends MongoGenericRepository<Payment> {
     @InjectModel(Payment.name) private resultModel: Model<PaymentDocument>,
     @InjectConnection() private readonly connection: mongoose.Connection,
     private usersService: UserService,
+    private billingService: billingService,
   ) {
     super(resultModel);
   }
 
-  async getPaymentData(dto: PaymentDto, user: UserFromToken, currency: string) {
-    // Replace this with real logic if you're using plans
-    const amount = 200; // flat monthly rate
-    return {
-      amount,
-      plan: { name: 'Standard Water Plan', id: 'default-plan-id' },
-    };
+  async getPaymentData(uuid: string): Promise<Resp<PaymentBill & { breakdown: any[] }>> {
+    const WATER_RATE_PER_UNIT = 5; // adjust if needed
+
+    try {
+      const billingResp = await this.billingService.getAll({ uuid });
+      if (!billingResp.ok || !billingResp.val.length) {
+        return {
+          ok: false,
+          val: null,
+          error: new Error('No billing records found'),
+          errMessage: 'No billing records found',
+          code: 404,
+        };
+      }
+
+      const billingList = billingResp.val;
+      const userId = billingList[0].userId;
+
+      // Get latest successful payment
+      const paymentResp = await this.getAll({
+        uuid,
+        status: PaymentStatus.SUCCESS,
+      });
+
+      let lastPaidDate = new Date('1970-01-01T00:00:00Z');
+      if (paymentResp.ok && paymentResp.val.length > 0) {
+        const latest = paymentResp.val.sort(
+          (a: Payment, b: Payment) =>
+            new Date(b.created_at ?? '').getTime() - new Date(a.created_at ?? '').getTime(),
+        )[0];
+        lastPaidDate = new Date(latest.created_at ?? lastPaidDate);
+      }
+
+      // Filter billing records after the last payment date
+      const unpaidBillings = billingList.filter((bill) => new Date(bill.date) > lastPaidDate);
+
+      const breakdown = unpaidBillings.map((bill) => {
+        const charge = bill.waterConsumption * WATER_RATE_PER_UNIT;
+        return {
+          date: bill.date,
+          waterConsumption: bill.waterConsumption,
+          charge,
+        };
+      });
+
+      const totalAmount = breakdown.reduce((sum, entry) => sum + entry.charge, 0);
+
+      const result: PaymentBill & { breakdown: any[] } = {
+        uuid,
+        userId,
+        dueDate: unpaidBillings.at(-1)?.date ?? '',
+        amount: totalAmount,
+        status: totalAmount > 0 ? PaymentStatus.PENDING : PaymentStatus.SUCCESS,
+        breakdown,
+      };
+
+      return { ok: true, val: result, error: null };
+    } catch (err) {
+      console.error('getPaymentData error:', err);
+      return {
+        ok: false,
+        val: null,
+        error: err,
+        errMessage: err.message,
+        code: 500,
+      };
+    }
   }
 
   async updateUsersPaymentStatus(userId): Promise<any> {

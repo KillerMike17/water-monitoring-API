@@ -16,13 +16,22 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Payment, PaymentDto, PaymentQuery, UpdateDto } from './payment.entity';
+import { Payment, PaymentBill, PaymentDto, PaymentQuery, UpdateDto } from './payment.entity';
 import { paymentService } from './payment.service';
 
 @ApiTags(Endpoint.Payment)
 @Controller(Endpoint.Payment)
 export class PaymentsController {
   constructor(private readonly paymentService: paymentService) {}
+
+  @Post('payment-bill')
+  @Roles(RoleType.ADMIN, RoleType.Customer)
+  @UseGuards(JwtGuard)
+  async getPaymentBill(@Body() createDto: { uuid: string }): Promise<PaymentBill> {
+    const resp = await this.paymentService.getPaymentData(createDto.uuid);
+    if (!resp.ok) throw new HttpException(resp.errMessage, resp.code);
+    return resp.val;
+  }
 
   @Post()
   @Roles(RoleType.ADMIN, RoleType.Customer)
@@ -54,7 +63,7 @@ export class PaymentsController {
   // == below queries dont need authentication
   @Get()
   @UseGuards(JwtGuard)
-  @UseGuards(JwtGuard)
+  @Roles(RoleType.ADMIN, RoleType.Customer)
   async filterAndPaginate(@Query() inputQuery: PaymentQuery): Promise<PaginatedRes<Payment>> {
     const res = await this.paymentService.searchWithPaginate(['name'], inputQuery);
     if (!res.ok) throw new HttpException(res.errMessage, res.code);

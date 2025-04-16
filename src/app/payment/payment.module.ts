@@ -6,6 +6,7 @@ import { Payment, PaymentSchema } from './payment.entity';
 import { UsersModule } from '@/app/account/users';
 import { ChapaModule } from 'chapa-nestjs';
 import { EnvVar } from '@/common/config/config.instances';
+import { BillingsModule } from '../monitoring/billing/billing.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { EnvVar } from '@/common/config/config.instances';
       secretKey: EnvVar.getInstance.CHAPA_SECRET_KEY,
     }),
     UsersModule,
+    BillingsModule,
   ],
   controllers: [PaymentsController],
   providers: [paymentService],

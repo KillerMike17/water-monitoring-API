@@ -1,4 +1,3 @@
-import { UsersModule } from '@/app/account/users';
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from './app/account/auth/auth.module';
@@ -11,6 +10,8 @@ import { NotificationModule } from './app/monitoring/notification/notification.m
 import { SensorModule } from './app/monitoring/sensor/sensor.module';
 import { TicketsModule } from './app/monitoring/support_ticket/ticket.module';
 import { BillingsModule } from './app/monitoring/billing/billing.module';
+import { PaymentsModule } from './app/payment/payment.module';
+import { UsersModule } from './app/account/users/users.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { BillingsModule } from './app/monitoring/billing/billing.module';
     SensorModule,
     TicketsModule,
     BillingsModule,
+    PaymentsModule,
 
     // Background Job Module
     ScheduleModule.forRoot(),
