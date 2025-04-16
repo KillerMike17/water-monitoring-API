@@ -40,7 +40,7 @@ export class UsersController {
   }
 
   @Get()
-  @Roles(RoleType.ADMIN)
+  @Roles(RoleType.ADMIN, RoleType.TECHNICIAN)
   @UseGuards(JwtGuard)
   async findMany(@Query() inputQuery: FilterUser): Promise<PaginatedRes<User>> {
     const res = await this.usersService.searchWithPaginate([], inputQuery);
@@ -49,7 +49,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  @Roles(RoleType.ADMIN)
+  @Roles(RoleType.ADMIN, RoleType.TECHNICIAN)
   @UseGuards(JwtGuard)
   async findOne(@Param('id') id: string): Promise<User> {
     const res = await this.usersService.findById(id);

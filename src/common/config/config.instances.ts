@@ -38,6 +38,10 @@ export const LOAD_ENVS = (req = false): ENV_TYPES => {
     FIREBASE_CLIENT_EMAIL: tryReadEnv(ENV_NAMES.FIREBASE_CLIENT_EMAIL, req),
     FIREBASE_PROJECT_ID: tryReadEnv(ENV_NAMES.FIREBASE_PROJECT_ID, req),
     FIREBASE_PROJECT_NAME: tryReadEnv(ENV_NAMES.FIREBASE_PROJECT_NAME, req),
+    GMAIL_APP_PWD: tryReadEnv(ENV_NAMES.GMAIL_APP_PWD, req),
+    EMAIL_FROM: tryReadEnv(ENV_NAMES.EMAIL_FROM, req),
+    CHAPA_SECRET_KEY: tryReadEnv(ENV_NAMES.CHAPA_SECRET_KEY, req),
+    CHAPA_SECRET_HASH: tryReadEnv(ENV_NAMES.CHAPA_SECRET_HASH, req),
   };
 };
 
@@ -74,7 +78,7 @@ export class EnvVar implements OnModuleInit {
       EnvVar._instance = new EnvVar();
     }
     return this._instance.envVariables;
-    // Do you need arguments? Make it a regular static method instead.
+    // Do you need arguments? Make it a regular static met`ho`d instead.
     // return this._instance || (this._instance = new this());
   }
 

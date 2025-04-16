@@ -2,7 +2,7 @@ import { OmitType, PartialType, ApiHideProperty } from '@nestjs/swagger';
 import { RoleType } from '@/shared/models';
 import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, IsBoolean } from 'class-validator';
 import { RegistrationMethod } from '@/app/account/users/entities/user.entity';
-import { ACCOUNT_STATUS, GENDER } from '@/app/account/profile/dto/profile.dto';
+import { ACCOUNT_STATUS, GENDER, SPECIALIZATIONS } from '@/app/account/profile/dto/profile.dto';
 
 export class RegisterUserInput {
   @IsNotEmpty()
@@ -102,6 +102,27 @@ export class CreateUsers extends RegisterUserInput {
 
   @IsOptional()
   uuid?: string;
+}
+
+export class CreateUsersTECHNICIAN extends RegisterUserInput {
+  @IsNotEmpty()
+  role: RoleType;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  active: boolean;
+
+  @IsOptional()
+  accountStatus?: ACCOUNT_STATUS;
+
+  @IsOptional()
+  uuid?: string;
+
+  @IsOptional()
+  SPECIALIZATIONS?: SPECIALIZATIONS;
+
+  @IsOptional()
+  QUALIFICATIONS?: string;
 }
 
 export class FilterUser extends PartialType(OmitType(RegisterUserInput, ['password'])) {

@@ -55,4 +55,7 @@ export enum NotificationStatus {
 }
 export enum NotificationPurpose {
   Ticket = 'Ticket',
+  WaterQuality = 'WaterQuality',
+  WaterControl = 'WaterControl',
+  WaterAlert = 'WaterAlert',
 }

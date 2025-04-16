@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { CreateUsers, UpdateMeDto } from '../users/entities/user.mut.dto';
+import { CreateUsers, CreateUsersTECHNICIAN, UpdateMeDto } from '../users/entities/user.mut.dto';
 import { JwtGuard } from '@/providers/guards/guard.rest';
 import { UserService } from '../users';
 import { Request } from 'express';
@@ -42,7 +42,10 @@ export class ProfileController {
   @Post('technician')
   @UseGuards(JwtGuard)
   @Roles(RoleType.ADMIN)
-  async createTechnicainAccount(@Req() req: Request, @Body() input: CreateUsers): Promise<User> {
+  async createTechnicainAccount(
+    @Req() req: Request,
+    @Body() input: CreateUsersTECHNICIAN,
+  ): Promise<User> {
     const res = await this.profileServ.createTechnician(input);
     if (!res.ok) throw new HttpException(res.errMessage, res.code);
     return res.val;

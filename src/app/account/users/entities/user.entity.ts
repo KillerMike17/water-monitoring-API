@@ -113,6 +113,15 @@ export class User {
 
   @Prop({ type: String, enum: Object.values(SPECIALIZATIONS) })
   specialization?: SPECIALIZATIONS;
+
+  @Prop({ type: String })
+  deviceId?: string;
+
+  @Prop({ type: Boolean, required: false })
+  hasPaid?: boolean;
+
+  @Prop({ type: String, required: false })
+  paymentDate?: string;
 }
 
 export type UserDocument = User & Document;

@@ -52,6 +52,9 @@ export class TicketQuery extends PaginationInputs {
   userId?: string;
 
   @IsOptional()
+  technicianId?: string;
+
+  @IsOptional()
   adventureId?: string;
 
   @IsOptional()

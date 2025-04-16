@@ -114,7 +114,7 @@ export enum PAYMENTSTATUS {
 
 export enum SPECIALIZATIONS {
   SENSOR = 'SENSOR',
-  Hardware = 'hardware',
+  HARDWARE = 'hardware',
 }
 
 export enum STATUS {

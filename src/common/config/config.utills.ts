@@ -123,4 +123,7 @@ export const ENV_DEFAULT = {
   GOOGLE_CLIENT_ID: 'some secret',
   GOOGLE_CLIENT_SECRET: '...',
   GOOGLE_GMAIL_REFRESH_TOKEN: '..',
+  //payment
+  CHAPA_SECRET_KEY: '',
+  CHAPA_SECRET_HASH: '',
 };

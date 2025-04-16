@@ -194,6 +194,7 @@ export class AuthService {
     logTrace('the user-', input);
     const userToLogin = await this.usersService.activeUserExists(phoneOrEmail, input.isPhone);
     if (!userToLogin) return null;
+    console.log('111');
 
     // Check password hash
     const pwdHashMatch = await this.cryptoService.verifyHash(userToLogin.password, password);
@@ -313,7 +314,7 @@ export class AuthService {
         email,
         { email },
         {
-          title: `Your Password for Account with ${user.val.email}  emailIs Bieng Reset.`,
+          title: `Your Password for Account with ${user.val.email}  emailIs being Reset.`,
           message: `Use the code below to Reset Yout Password for the account with ${user.val.email}  email.`,
           warning: 'For Password Reset',
         },

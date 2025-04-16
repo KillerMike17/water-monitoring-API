@@ -23,7 +23,7 @@ export class EmailService implements VerificationServiceInterface {
   private readonly from: string;
 
   constructor() {
-    this.from = ` WaterMonitoring   <${process.env.EMAIL_FROM}>`;
+    this.from = `WaterMonitoring <${process.env.EMAIL_FROM}>`;
     this.createAppPwdTransport();
   }
 
@@ -94,14 +94,18 @@ export class EmailService implements VerificationServiceInterface {
       // const transporter = await this.createOAuthTransport();
       const transporter = this.transporter;
 
+      // Corrected path configuration
+      const templatesDir = path.join(process.cwd(), 'src', 'email', 'templates');
+
       const hbsOptions = {
         viewEngine: {
           extName: '.hbs',
-          partialsDir: path.join(__dirname, './templates/'),
-          layoutsDir: path.join(__dirname, './templates/'),
-          defaultLayout: '',
+          partialsDir: templatesDir,
+          layoutsDir: templatesDir,
+          defaultLayout: false, // Set to false if you're not using layouts
         },
-        viewPath: path.join(__dirname, './templates/'),
+        viewPath: templatesDir,
+        extName: '.hbs',
       };
       transporter.use('compile', hbs(hbsOptions));
 
@@ -135,7 +139,7 @@ export class EmailService implements VerificationServiceInterface {
 
       return Succeed(message);
     } catch (e) {
-      logTrace('email sending error', e.message);
+      logTrace('email sending error', email + token + e.message);
       return FAIL(e.message);
     }
   }

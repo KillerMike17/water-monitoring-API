@@ -9,4 +9,6 @@ export enum Endpoint {
   Ticket = 'ticket',
   Payment = 'payment',
   Notification = 'notification',
+  Sensor = 'sensor',
+  SubscriptionPayments = 'Payment',
 }
