@@ -12,7 +12,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { UserService } from './users.service';
-import { CreateUser, FilterUser, UpdateUserWithRole } from './entities/user.mut.dto';
+import { CreateUser, FilterUser, FilterUserNew, UpdateUserWithRole } from './entities/user.mut.dto';
 import { User } from './entities/user.entity';
 
 import { Roles } from '@/providers/guards/roles.decorators';
@@ -37,6 +37,15 @@ export class UsersController {
     const resp = await this.usersService.createUser(createDto);
     if (!resp.ok) throw new HttpException(resp.errMessage, resp.code);
     return resp.val;
+  }
+
+  @Get('search')
+  @Roles(RoleType.ADMIN, RoleType.TECHNICIAN, RoleType.Customer)
+  @UseGuards(JwtGuard)
+  async findManyNew(@Query() inputQuery: FilterUserNew): Promise<PaginatedRes<User>> {
+    const res = await this.usersService.searchWithPaginateNew([], inputQuery);
+    if (!res.ok) throw new HttpException(res.errMessage, 500);
+    return res.val;
   }
 
   @Get()

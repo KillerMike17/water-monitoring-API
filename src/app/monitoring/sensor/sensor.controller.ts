@@ -2,6 +2,7 @@ import { PaginatedRes } from '@/common/common.types.dto';
 import { JwtGuard } from '@/providers/guards/guard.rest';
 import { Roles } from '@/providers/guards/roles.decorators';
 import { Endpoint } from '@/shared/modelConsts';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { RoleType } from '@/shared/models';
 import {
   Body,
@@ -149,13 +150,13 @@ export class SensorController {
   //     return res.val;
   //   }
 
-  //   @Get()
-  //   @UseGuards(JwtGuard)
-  //   async getReadings(@Query() inputQuery: SensorQuery): Promise<PaginatedRes<Sensor>> {
-  //     const res = await this.sensorService.searchWithPaginate([], inputQuery);
-  //     if (!res.ok) throw new HttpException(res.errMessage, res.code);
-  //     return res.val;
-  //   }
+  // @Get()
+  // @UseGuards(JwtGuard)
+  // async getReadings(@Query() inputQuery: SensorQuery): Promise<PaginatedRes<Sensor>> {
+  //   const res = await this.sensorService.searchWithPaginate([], inputQuery);
+  //   if (!res.ok) throw new HttpException(res.errMessage, res.code);
+  //   return res.val;
+  // }
 
   //   @Get('device/:deviceId/latest')
   //   @UseGuards(JwtGuard)

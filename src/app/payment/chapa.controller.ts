@@ -37,6 +37,8 @@ export class ChapaController {
     const user: UserFromToken = req['user'];
 
     const paymentData = await this.paymentServ.getPaymentData(createDto.uuid);
+    if (!paymentData.ok) throw new HttpException('No bill found', 500);
+
     const tx_ref = await this.chapaService.generateTransactionReference();
     // logTrace('found tx_ref', tx_ref);
     const response = await this.chapaService.initialize({

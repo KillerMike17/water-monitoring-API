@@ -25,10 +25,11 @@
     "test:login": "jest --config src/app/account/auth/test/login/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^9.0.0",
-    "@nestjs/core": "^9.0.0",
+    "@nestjs/common": "^9.4.3",
+    "@nestjs/core": "^9.4.3",
+    "@nestjs/microservices": "^9.4.3",
     "@nestjs/mongoose": "^9.2.2",
-    "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/platform-express": "^9.4.3",
     "@nestjs/schedule": "^4.1.1",
     "@nestjs/swagger": "^6.3.0",
     "@nestjs/throttler": "^5.0.0",

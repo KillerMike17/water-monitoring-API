@@ -121,7 +121,6 @@ export class TicketsController {
   // == below queries dont need authentication
   @Get()
   @UseGuards(JwtGuard)
-  @UseGuards(JwtGuard)
   async filterAndPaginate(@Query() inputQuery: TicketQuery): Promise<PaginatedRes<Ticket>> {
     const res = await this.ticketService.searchWithPaginate(['name'], inputQuery);
     if (!res.ok) throw new HttpException(res.errMessage, res.code);
