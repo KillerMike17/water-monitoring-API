@@ -1,6 +1,14 @@
 import { OmitType, PartialType, ApiHideProperty } from '@nestjs/swagger';
 import { RoleType } from '@/shared/models';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, IsBoolean } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+  IsBoolean,
+  IsNumber,
+} from 'class-validator';
 import { RegistrationMethod } from '@/app/account/users/entities/user.entity';
 import { ACCOUNT_STATUS, GENDER, SPECIALIZATIONS } from '@/app/account/profile/dto/profile.dto';
 
@@ -119,7 +127,7 @@ export class CreateUsersTECHNICIAN extends RegisterUserInput {
   uuid?: string;
 
   @IsOptional()
-  SPECIALIZATIONS?: SPECIALIZATIONS;
+  specialization?: SPECIALIZATIONS;
 
   @IsOptional()
   QUALIFICATIONS?: string;
@@ -144,4 +152,29 @@ export class FilterUser extends PartialType(OmitType(RegisterUserInput, ['passwo
 export class UpdateEmailInput {
   @IsEmail()
   newEmail: string;
+}
+
+export class FilterUserNew extends FilterUser {
+  @IsOptional()
+  @IsNumber()
+  skip?: number = 0; // Default to 0 if not specified
+
+  @IsOptional()
+  @IsNumber()
+  limit?: number = 10; // Default to 10 if not specified
+
+  @IsOptional()
+  @IsString()
+  role?: string;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  includeSpecialization?: boolean = true; // Default to true if not specified
+
+  @IsOptional()
+  sort?: Record<string, 1 | -1>;
 }

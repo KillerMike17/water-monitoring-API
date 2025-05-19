@@ -6,12 +6,13 @@ import { emailRegex, User, UserDocument } from './entities/user.entity';
 import { MongoGenericRepository } from '@/providers/database/base/mongo.base.repo';
 import { logTrace } from '@/common/logger';
 import { FilterQuery, Model } from 'mongoose';
-import { CreateUsers } from './entities/user.mut.dto';
+import { CreateUsers, FilterUserNew } from './entities/user.mut.dto';
 import { CryptoService } from '@/providers/crypto';
 import { ChangePasswordInput } from '../auth/dto/auth.input.dto';
 import { FAIL, Resp, Succeed } from '@/common/constants/return.const';
 import { RespConst } from '@/common/constants/respConst';
 import { ACCOUNT_STATUS } from '../profile/dto/profile.dto';
+import { PaginatedRes } from '@/common/common.types.dto';
 
 @Injectable()
 export class UserService extends MongoGenericRepository<User> {
@@ -20,6 +21,59 @@ export class UserService extends MongoGenericRepository<User> {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {
     super(userModel);
+  }
+
+  async searchWithPaginateNew(conditions: any[] = [], filter: FilterUserNew): Promise<any> {
+    try {
+      // Build search query if search parameter exists
+      if (filter.search?.trim()) {
+        const searchRegex = new RegExp(filter.search.trim(), 'i');
+        conditions.push({
+          $or: [
+            { firstName: { $regex: searchRegex } },
+            { lastName: { $regex: searchRegex } },
+            { email: { $regex: searchRegex } },
+            ...(filter.includeSpecialization ? [{ specialization: { $regex: searchRegex } }] : []),
+          ].filter(Boolean), // Remove undefined entries
+        });
+      }
+
+      // Add role filter if specified
+      if (filter.role) {
+        conditions.push({ role: filter.role });
+      }
+
+      const query = conditions.length > 0 ? { $and: conditions } : {};
+      const sort = filter.sort || { createdAt: -1 }; // Default sorting
+
+      const [data, total] = await Promise.all([
+        this.userModel
+          .find(query)
+          .skip(filter.skip)
+          .limit(filter.limit)
+          .sort(sort)
+          .lean<User[]>()
+          .exec(),
+        this.userModel.countDocuments(query).exec(),
+      ]);
+
+      return {
+        ok: true,
+        val: {
+          data,
+          total,
+          limit: filter.limit,
+          skip: filter.skip,
+        },
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        errMessage: 'Failed to fetch users',
+        code: 500,
+        details: error.message,
+      };
+    }
   }
 
   public async createUser(createDto: CreateUsers): Promise<Resp<User>> {

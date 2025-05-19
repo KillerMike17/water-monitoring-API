@@ -31,8 +31,8 @@ export class Billing {
   @Prop({ type: Number })
   waterConsumption: number;
 
-  @Prop({ type: String, enum: Object.values(PAYMENTSTATUS) })
-  specialization?: PAYMENTSTATUS;
+  @Prop({ type: String, enum: Object.values(PAYMENTSTATUS), default: PAYMENTSTATUS.NOTPIAD })
+  status?: PAYMENTSTATUS;
 }
 
 export type BillingDocument = Billing & Document;

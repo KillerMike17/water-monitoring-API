@@ -9,6 +9,7 @@ import { UserService } from '@/app/account/users/users.service';
 import { UserFromToken } from '@/shared/models';
 import { Resp } from '@/common/constants/return.const';
 import { billingService } from '../monitoring/billing/billing.service';
+import { logTrace } from '@/common/logger';
 
 @Injectable()
 export class paymentService extends MongoGenericRepository<Payment> {
@@ -76,7 +77,7 @@ export class paymentService extends MongoGenericRepository<Payment> {
         status: totalAmount > 0 ? PaymentStatus.PENDING : PaymentStatus.SUCCESS,
         breakdown,
       };
-
+      logTrace('getPaymentData result:', result);
       return { ok: true, val: result, error: null };
     } catch (err) {
       console.error('getPaymentData error:', err);

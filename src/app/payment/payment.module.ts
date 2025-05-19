@@ -7,6 +7,7 @@ import { UsersModule } from '@/app/account/users';
 import { ChapaModule } from 'chapa-nestjs';
 import { EnvVar } from '@/common/config/config.instances';
 import { BillingsModule } from '../monitoring/billing/billing.module';
+import { ChapaController } from './chapa.controller';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { BillingsModule } from '../monitoring/billing/billing.module';
     UsersModule,
     BillingsModule,
   ],
-  controllers: [PaymentsController],
+  controllers: [PaymentsController, ChapaController],
   providers: [paymentService],
   exports: [paymentService],
 })
