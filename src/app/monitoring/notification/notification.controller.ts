@@ -73,7 +73,7 @@ export class NotificationController {
   // == below queries dont need authentication
   @Get()
   @UseGuards(JwtGuard)
-  @Roles(RoleType.ADMIN)
+  @Roles(RoleType.ADMIN, RoleType.Customer)
   async filterAndPaginate(
     @Req() req: Request,
     @Query() inputQuery: NotificationQuery,

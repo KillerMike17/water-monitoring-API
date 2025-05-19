@@ -110,6 +110,9 @@ export class CreateUsers extends RegisterUserInput {
 
   @IsOptional()
   uuid?: string;
+
+  @IsOptional()
+  deviceId?: string;
 }
 
 export class CreateUsersTECHNICIAN extends RegisterUserInput {

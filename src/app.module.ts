@@ -33,23 +33,17 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     // Background Job Module
     ScheduleModule.forRoot(),
 
-    // Mongoose Module for MongoDB
-    MongooseModule.forRoot('mongodb://username:password@host:port/database', {
-      // Replace with your MongoDB connection string
-      // other options if needed
-    }),
-
     // MQTT Client Module
-    ClientsModule.register([
-      {
-        name: 'MQTT_CLIENT',
-        transport: Transport.MQTT,
-        options: {
-          url: 'mqtt://your-mqtt-broker:1883', // Replace with your MQTT broker URL
-          // other MQTT options if needed
-        },
-      },
-    ]),
+    // ClientsModule.register([
+    //   {
+    //     name: 'MQTT_CLIENT',
+    //     transport: Transport.MQTT,
+    //     options: {
+    //       url: 'mqtt://your-mqtt-broker:1883', // Replace with your MQTT broker URL
+    //       // other MQTT options if needed
+    //     },
+    //   },
+    // ]),
   ],
   controllers: [AppController],
   providers: [AppService],

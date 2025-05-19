@@ -49,8 +49,8 @@ export class UsersController {
   }
 
   @Get()
-  @Roles(RoleType.ADMIN, RoleType.TECHNICIAN)
-  @UseGuards(JwtGuard)
+  // @Roles(RoleType.ADMIN, RoleType.TECHNICIAN)
+  // @UseGuards(JwtGuard)
   async findMany(@Query() inputQuery: FilterUser): Promise<PaginatedRes<User>> {
     const res = await this.usersService.searchWithPaginate([], inputQuery);
     if (!res.ok) throw new HttpException(res.errMessage, 500);

@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { EnvVar } from './common/config/config.instances';
 import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 // import express from 'express';
 async function bootstrap() {
   const port = EnvVar.getInstance.PORT;
@@ -28,6 +29,18 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
+  // Create MQTT microservice
+  const mqttMicroservice = app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.MQTT,
+    options: {
+      url: 'mqtts://f54dfe3938d04e29930a0c7e39926c8a.s1.eu.hivemq.cloud:8883', // change if using a remote broker
+      username: 'mikias',
+      password: 'Mayy@1234',
+    },
+  });
+
+  // Start both HTTP and MQTT
+  await app.startAllMicroservices();
   await app.listen(port);
   console.log(` server started Check docs@  http://localhost:${port}/swagger`);
 }
