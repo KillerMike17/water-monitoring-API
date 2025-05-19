@@ -84,8 +84,17 @@ export class SensorWaterDataDTO {
 
 @Schema()
 export class SensorAlertDTO {
+  @Prop({ type: Boolean, required: true })
+  valveStatus: boolean;
+
   @Prop({ type: String, required: true })
   alertType: string;
+
+  @Prop({ type: String, required: true })
+  flowRate: string;
+
+  @Prop({ type: String, required: true })
+  turbidity: string;
 
   @Prop({ type: String, required: true })
   message: string;

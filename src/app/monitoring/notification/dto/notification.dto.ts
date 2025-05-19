@@ -58,4 +58,5 @@ export enum NotificationPurpose {
   WaterQuality = 'WaterQuality',
   WaterControl = 'WaterControl',
   WaterAlert = 'WaterAlert',
+  SystemHealth = 'SystemHealth',
 }

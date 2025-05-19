@@ -18,10 +18,12 @@ export class ProfileService {
     // Generate a UUID and append 8 random numbers
     // Generate a UUID without dashes
     const uuid = uuidv4().replace(/-/g, '');
+    const deviceId = uuidv4().replace(/-/g, '');
 
     // Generate a 6-digit random number
     const randomNumbers = Math.floor(100000 + Math.random() * 900000);
     createDto.uuid = `${uuid}-${randomNumbers}`; // Assign it to your user ID
+    createDto.deviceId = `${deviceId}-${randomNumbers}`;
 
     createDto.password = await this.cryptoService.createHash(createDto.password);
     return this.usersService.createOne(createDto);

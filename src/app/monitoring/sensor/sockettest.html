@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socket.IO Test</title>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>Socket.IO Client Test</h1>
+  <script>
+    // Connect to your local backend
+    const socket = io('http://localhost:3001'); // Adjust port if needed
+
+    socket.on('connect', () => {
+      console.log('Connected to server, id:', socket.id);
+    });
+
+    socket.on('sensor-data', (data) => {
+      console.log('Received sensor-data:', data);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from server');
+    });
+
+    // Example: emit register event if you have that implemented
+    socket.emit('register', { clientId: '7ebb0d2618b24dc88cfb564400f8f5cc-289317' });
+  </script>
+</body>
+</html>

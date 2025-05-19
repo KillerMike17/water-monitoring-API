@@ -2,13 +2,15 @@ import { PaginatedRes } from '@/common/common.types.dto';
 import { JwtGuard } from '@/providers/guards/guard.rest';
 import { Roles } from '@/providers/guards/roles.decorators';
 import { Endpoint } from '@/shared/modelConsts';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { SensorGateway } from './sensor.gateway';
+import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
 import { RoleType } from '@/shared/models';
 import {
   Body,
   Controller,
   Get,
   HttpException,
+  Inject,
   Param,
   Patch,
   Post,
@@ -31,14 +33,35 @@ import {
   NotificationMessage,
   NotificationPurpose,
 } from '../notification/dto/notification.dto';
+import { UserService } from '@/app/account/users';
 
 @ApiTags(Endpoint.Sensor)
 @Controller(Endpoint.Sensor)
 export class SensorController {
   constructor(
+    private readonly userService: UserService,
     private readonly sensorService: SensorService,
     private readonly notificationService: NotificationService,
+    private readonly sensorGateway: SensorGateway,
+    @Inject('MQTT_SERVICE') private readonly mqttClient: ClientProxy,
   ) {}
+
+  @MessagePattern('killer') // Replace with your topic
+  handleMessage(@Payload() data: any) {
+    console.log('Received MQTT message:', data);
+    return this.sensorService.processMqttMessage(data);
+
+    //todo:if no issue
+    // this.sensorService.createOne({
+    //   flowRate: data.flowRate,
+    //   turbidity: data.turbidity,
+    //   valveStatus: data.valveStatus,
+    //   deviceId: data.deviceId,
+    //   timestamp: data.timestamp,
+    // });
+    // Process data as needed
+    return { received: data };
+  }
 
   @Post('water-data')
   //   @Roles(RoleType.ADMIN, RoleType.IOT_DEVICE)
@@ -149,14 +172,43 @@ export class SensorController {
 
   //     return res.val;
   //   }
+  @Patch(':id/valve')
+  @UseGuards(JwtGuard)
+  async toggleValve(
+    @Param('id') id: string,
+    @Body() { status, deviceId }: { status: boolean; deviceId: string },
+  ) {
+    // const res = await this.sensorService.updateById(id, { valveStatus: status });
+    // if (!res.ok) throw new HttpException(res.errMessage, res.code);
 
-  // @Get()
-  // @UseGuards(JwtGuard)
-  // async getReadings(@Query() inputQuery: SensorQuery): Promise<PaginatedRes<Sensor>> {
-  //   const res = await this.sensorService.searchWithPaginate([], inputQuery);
-  //   if (!res.ok) throw new HttpException(res.errMessage, res.code);
-  //   return res.val;
-  // }
+    // const sensor = res.val;
+
+    // Emit the updated valve status to the frontend
+    const user = await this.userService.findOne({ deviceId: deviceId });
+    if (user) {
+      const topic = `rellik`;
+      this.mqttClient.emit(topic, { deviceId: deviceId, status: status });
+
+      await this.notificationService.createOne({
+        userId: user.val._id,
+        type: NotificationEnum.Individual,
+        title: `Valve ${status ? 'Opened' : 'Closed'}`,
+        body: `Valve status changed for device ${deviceId}`,
+        messageType: NotificationMessage.Information,
+        purpose: NotificationPurpose.WaterControl,
+      });
+    }
+
+    return { message: 'Valve status updated successfully' };
+  }
+
+  @Get()
+  @UseGuards(JwtGuard)
+  async getReadings(@Query() inputQuery: SensorQuery): Promise<PaginatedRes<Sensor>> {
+    const res = await this.sensorService.searchWithPaginate([], inputQuery);
+    if (!res.ok) throw new HttpException(res.errMessage, res.code);
+    return res.val;
+  }
 
   //   @Get('device/:deviceId/latest')
   //   @UseGuards(JwtGuard)
