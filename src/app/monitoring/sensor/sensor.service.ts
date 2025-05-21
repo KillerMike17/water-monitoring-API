@@ -41,6 +41,71 @@ export class SensorService extends MongoGenericRepository<Sensor> {
     }
   }
 
+  private async upsertNormalReading(data: any, userId: string) {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const existing = await this.sensorModel.findOne({
+      deviceId: data.deviceId,
+      type: { $ne: SENSOR_INFO_TYPE.ALERT },
+      timestamp: { $gte: startOfDay },
+    });
+
+    if (existing) {
+      await this.sensorModel.findByIdAndUpdate(existing._id, {
+        $set: {
+          flowRate: data.flowRate,
+          monthlyConsumption: data.monthlyConsumption,
+          turbidity: data.turbidity,
+          valveStatus: data.valveStatus,
+          timestamp: data.timestamp,
+        },
+      });
+    } else {
+      await this.sensorModel.create({
+        userId,
+        deviceId: data.deviceId,
+        flowRate: data.flowRate,
+        monthlyConsumption: data.monthlyConsumption,
+        turbidity: data.turbidity,
+        valveStatus: data.valveStatus,
+        timestamp: data.timestamp,
+      });
+    }
+  }
+
+  private async saveOrUpdateAlert(alertDto: SensorAlertDTO, userId: string) {
+    const now = new Date();
+    const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+
+    const recentAlert = await this.sensorModel.findOne({
+      deviceId: alertDto.deviceId,
+      type: SENSOR_INFO_TYPE.ALERT,
+      timestamp: { $gte: tenMinutesAgo },
+    });
+
+    if (recentAlert) {
+      if (recentAlert.alertType === alertDto.alertType) {
+        // Replace existing
+        await this.sensorModel.findByIdAndUpdate(recentAlert._id, {
+          $set: {
+            ...alertDto,
+            userId,
+            type: SENSOR_INFO_TYPE.ALERT,
+          },
+        });
+        return;
+      }
+    }
+
+    await this.sensorModel.create({
+      ...alertDto,
+      userId,
+      type: SENSOR_INFO_TYPE.ALERT,
+    });
+  }
+
+  // old code
   async createWaterReading(createDto: SensorWaterDataDTO): Promise<Resp<Sensor>> {
     //find userid by deviceId
     const user = await this.userService.findOne({ deviceId: createDto.deviceId });
@@ -51,6 +116,7 @@ export class SensorService extends MongoGenericRepository<Sensor> {
     //save reading
     const reading = await this.sensorModel.create({
       flowRate: createDto.flowRate,
+      monthlyConsumption: createDto.monthlyConsumption,
       turbidity: createDto.turbidity,
       valveStatus: createDto.valveState,
       deviceId: createDto.deviceId,
@@ -77,6 +143,7 @@ export class SensorService extends MongoGenericRepository<Sensor> {
       type: SENSOR_INFO_TYPE.ALERT,
       deviceId: createDto.deviceId,
       flowRate: createDto.flowRate,
+      monthlyConsumption: createDto.monthlyConsumption,
       turbidity: createDto.turbidity,
       valveStatus: createDto.valveStatus,
       timestamp: createDto.timestamp,
@@ -115,6 +182,7 @@ export class SensorService extends MongoGenericRepository<Sensor> {
         flowRate,
         turbidity,
         valveState: data.valveStatus,
+        monthlyConsumption: data.monthlyConsumption,
         timestamp: data.timestamp,
         deviceId: data.deviceId,
       });
@@ -131,14 +199,16 @@ export class SensorService extends MongoGenericRepository<Sensor> {
 
       // Store normal reading (no alert)
       if (user) {
-        await this.createOne({
-          userId: user.val._id,
-          flowRate: data.flowRate,
-          turbidity: data.turbidity,
-          valveStatus: data.valveStatus,
-          deviceId: data.deviceId,
-          timestamp: data.timestamp,
-        });
+        // await this.createOne({
+        //   userId: user.val._id,
+        //   flowRate: data.flowRate,
+        //   monthlyConsumption: data.monthlyConsumption,
+        //   turbidity: data.turbidity,
+        //   valveStatus: data.valveStatus,
+        //   deviceId: data.deviceId,
+        //   timestamp: data.timestamp,
+        // });
+        await this.upsertNormalReading(data, user.val._id);
       }
 
       return { received: data, status: 'processed', hasAlert: false };
@@ -159,11 +229,13 @@ export class SensorService extends MongoGenericRepository<Sensor> {
       turbidity: data.turbidity,
       deviceId: data.deviceId,
       timestamp: data.timestamp,
+      monthlyConsumption: data.monthlyConsumption,
       alertType: 'UNSAFE_WATER',
       message: `Unsafe water detected: Turbidity is ${turbidity} NTU.`,
     };
 
-    await this.createWaterReadingAlert(alertDto);
+    // await this.createWaterReadingAlert(alertDto);
+    await this.saveOrUpdateAlert(alertDto, user.val._id);
 
     if (user) {
       await this.notifService.createOne({
@@ -182,13 +254,15 @@ export class SensorService extends MongoGenericRepository<Sensor> {
       flowRate: data.flowRate,
       turbidity: data.turbidity,
       valveStatus: data.valveStatus,
+      monthlyConsumption: data.monthlyConsumption,
       deviceId: data.deviceId,
       timestamp: data.timestamp,
       alertType: 'SENSOR_CHECK',
       message: `Abnormal sensor readings: Turbidity ${turbidity} NTU, Flow Rate ${flowRate} L/min.`,
     };
 
-    await this.createWaterReadingAlert(alertDto);
+    // await this.createWaterReadingAlert(alertDto);
+    await this.saveOrUpdateAlert(alertDto, user.val._id);
 
     if (user) {
       await this.notifService.createOne({

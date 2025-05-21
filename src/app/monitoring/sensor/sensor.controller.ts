@@ -172,12 +172,9 @@ export class SensorController {
 
   //     return res.val;
   //   }
-  @Patch(':id/valve')
+  @Patch('valvechange')
   @UseGuards(JwtGuard)
-  async toggleValve(
-    @Param('id') id: string,
-    @Body() { status, deviceId }: { status: boolean; deviceId: string },
-  ) {
+  async toggleValve(@Body() { status, deviceId }: { status: boolean; deviceId: string }) {
     // const res = await this.sensorService.updateById(id, { valveStatus: status });
     // if (!res.ok) throw new HttpException(res.errMessage, res.code);
 
