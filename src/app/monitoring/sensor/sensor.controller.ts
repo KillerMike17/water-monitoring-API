@@ -48,8 +48,16 @@ export class SensorController {
 
   @MessagePattern('killer') // Replace with your topic
   handleMessage(@Payload() data: any) {
-    console.log('Received MQTT message:', data);
-    return this.sensorService.processMqttMessage(data);
+    console.log('Received alert message:', data);
+    if ('alertType' in data && 'message' in data) {
+      const res = this.sensorService.processAlertMessage(data);
+      console.log('Received alert message:', data);
+      return res;
+    } else {
+      const res = this.sensorService.processMqttMessage(data); // Sensor data
+      console.log('Received MQTT message:', data);
+      return res;
+    }
 
     //todo:if no issue
     // this.sensorService.createOne({
@@ -118,11 +126,10 @@ export class SensorController {
   //   return resp.val;
   // }
 
-  // @Get('water-data')
-  // @Roles(RoleType.ADMIN, RoleType.TECHNICIAN)
-  // async getWaterData() {
-  //   return this.sensorService.getLatestSensorData();
-  // }
+  @Get('run-billing')
+  async getWaterData() {
+    return this.sensorService.handleMonthlyBilling();
+  }
 
   // @Post('water-alert')
   // @Roles(RoleType.IOT_DEVICE)

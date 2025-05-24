@@ -25,7 +25,7 @@ import { PaginatedRes } from '@/common/common.types.dto';
 @ApiTags(Endpoint.Users)
 @Controller(Endpoint.Users)
 @Roles(RoleType.ADMIN)
-@UseGuards(JwtGuard)
+// @UseGuards(JwtGuard)
 export class UsersController {
   constructor(private readonly usersService: UserService) {}
 
@@ -39,14 +39,14 @@ export class UsersController {
     return resp.val;
   }
 
-  @Get('search')
-  @Roles(RoleType.ADMIN, RoleType.TECHNICIAN, RoleType.Customer)
-  @UseGuards(JwtGuard)
-  async findManyNew(@Query() inputQuery: FilterUserNew): Promise<PaginatedRes<User>> {
-    const res = await this.usersService.searchWithPaginateNew([], inputQuery);
-    if (!res.ok) throw new HttpException(res.errMessage, 500);
-    return res.val;
-  }
+  // @Get('search')
+  // @Roles(RoleType.ADMIN, RoleType.TECHNICIAN, RoleType.Customer)
+  // @UseGuards(JwtGuard)
+  // async findManyNew(@Query() inputQuery: FilterUserNew): Promise<PaginatedRes<User>> {
+  //   const res = await this.usersService.searchWithPaginateNew([], inputQuery);
+  //   if (!res.ok) throw new HttpException(res.errMessage, 500);
+  //   return res.val;
+  // }
 
   @Get()
   // @Roles(RoleType.ADMIN, RoleType.TECHNICIAN)
@@ -58,8 +58,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  @Roles(RoleType.ADMIN, RoleType.TECHNICIAN)
-  @UseGuards(JwtGuard)
+  // @Roles(RoleType.ADMIN, RoleType.TECHNICIAN)
+  // @UseGuards(JwtGuard)
   async findOne(@Param('id') id: string): Promise<User> {
     const res = await this.usersService.findById(id);
     if (!res.ok) throw new HttpException(res.errMessage, res.code);

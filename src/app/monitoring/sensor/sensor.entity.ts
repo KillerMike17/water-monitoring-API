@@ -21,22 +21,22 @@ export class Sensor {
 
   @IsNotEmpty()
   @IsNumber()
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number })
   flowRate: number;
 
   @IsNotEmpty()
   @IsNumber()
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number })
   turbidity: number;
 
   @IsNotEmpty()
   @IsNumber()
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number })
   monthlyConsumption: number;
 
   @IsNotEmpty()
   @IsBoolean()
-  @Prop({ type: Boolean, required: true })
+  @Prop({ type: Boolean })
   valveStatus: boolean;
 
   @IsNotEmpty()
@@ -92,20 +92,20 @@ export class SensorWaterDataDTO {
 
 @Schema()
 export class SensorAlertDTO {
-  @Prop({ type: Boolean, required: true })
-  valveStatus: boolean;
+  @Prop({ type: Boolean })
+  valveStatus?: boolean;
 
   @Prop({ type: String, required: true })
   alertType: string;
 
-  @Prop({ type: String, required: true })
-  flowRate: string;
+  @Prop({ type: String })
+  flowRate?: string;
 
-  @Prop({ type: String, required: true })
-  monthlyConsumption: string;
+  @Prop({ type: String })
+  monthlyConsumption?: string;
 
-  @Prop({ type: String, required: true })
-  turbidity: string;
+  @Prop({ type: String })
+  turbidity?: string;
 
   @Prop({ type: String, required: true })
   message: string;

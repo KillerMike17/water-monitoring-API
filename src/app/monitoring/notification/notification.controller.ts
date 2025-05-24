@@ -72,16 +72,16 @@ export class NotificationController {
 
   // == below queries dont need authentication
   @Get()
-  @UseGuards(JwtGuard)
-  @Roles(RoleType.ADMIN, RoleType.Customer)
+  // @UseGuards(JwtGuard)
+  // @Roles(RoleType.ADMIN, RoleType.Customer)
   async filterAndPaginate(
     @Req() req: Request,
     @Query() inputQuery: NotificationQuery,
   ): Promise<PaginatedRes<Notification>> {
-    const user: UserFromToken = req['user'];
-    if (user.role == RoleType.Customer) {
-      inputQuery.userId = user._id;
-    }
+    // const user: UserFromToken = req['user'];
+    // if (user.role == RoleType.Customer) {
+    //   inputQuery.userId = user._id;
+    // }
     const paginateQuery = pickKeys(inputQuery, [...pagiKeys]);
     const query = removeKeys(inputQuery, [...pagiKeys, 'searchText']);
 

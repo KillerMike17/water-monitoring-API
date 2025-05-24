@@ -41,9 +41,9 @@ export class Notification {
 
   @MProp({
     type: String,
-    enum: Object.values(NotificationPurpose),
+    // enum: Object.values(NotificationPurpose),
   })
-  purpose?: NotificationPurpose;
+  purpose?: string;
 
   @MProp({
     type: String,
