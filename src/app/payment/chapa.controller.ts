@@ -98,12 +98,12 @@ export class ChapaController {
     if (response.status === 'success' && payment.val.status === PaymentStatus.PENDING) {
       const updatedResponse = await this.paymentServ.updateById(payment.val._id, {
         ...response.data,
-        timestamp: response.data.updated_at,
+        timestamp: response.data.created_at,
         status: PaymentStatus.SUCCESS,
         charge: response.data.charge,
         reference: response.data.reference,
         created_at: response.data.created_at,
-        updated_at: response.data.updated_at,
+        updated_at: response.data.created_at,
         // event: response.data?.event,
       });
 
@@ -141,7 +141,7 @@ export class ChapaController {
           charge: body.data.charge,
           reference: body.data.reference,
           created_at: body.data.created_at,
-          updated_at: body.data.updated_at,
+          updated_at: body.data.created_at,
           // event: response.data?.event,
         });
 
