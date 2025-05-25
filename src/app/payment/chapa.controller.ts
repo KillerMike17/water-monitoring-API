@@ -135,14 +135,24 @@ export class ChapaController {
 
       if (payment.ok && payment.val.status === PaymentStatus.PENDING) {
         const updatedResponse = await this.paymentServ.updateById(payment.val._id, {
-          ...req.body.data,
+          timestamp: body.data.updated_at,
           status: PaymentStatus.SUCCESS,
+          ...req.body.data,
           charge: body.data.charge,
           reference: body.data.reference,
           created_at: body.data.created_at,
           updated_at: body.data.updated_at,
           // event: response.data?.event,
         });
+
+        if (updatedResponse.ok) {
+          this.billingServ.updateBillingStatus(
+            payment.val.uuid,
+            body.data.updated_at,
+            req.body.tx_ref,
+          );
+        }
+
         if (!updatedResponse.ok)
           throw new HttpException(updatedResponse.errMessage, updatedResponse.code);
         return this.paymentServ.updateUsersPaymentStatus(updatedResponse.val.userId);
