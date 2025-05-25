@@ -16,6 +16,7 @@ import { UserFromToken } from '@/shared/models';
 import { Resp } from '@/common/constants/return.const';
 import { billingService } from '../monitoring/billing/billing.service';
 import { logTrace } from '@/common/logger';
+import { PAYMENTSTATUS } from '../account/profile/dto/profile.dto';
 
 @Injectable()
 export class paymentService extends MongoGenericRepository<Payment> {
@@ -32,7 +33,7 @@ export class paymentService extends MongoGenericRepository<Payment> {
     const WATER_RATE_PER_UNIT = 5; // adjust if needed
 
     try {
-      const billingResp = await this.billingService.getAll({ uuid });
+      const billingResp = await this.billingService.getAll({ uuid, status: PAYMENTSTATUS.NOTPIAD });
       if (!billingResp.ok || !billingResp.val.length) {
         return {
           ok: false,
