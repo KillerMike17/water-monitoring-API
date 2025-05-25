@@ -128,35 +128,40 @@ export class ChapaController {
       .digest('hex');
 
     if (hash == req.headers['Chapa-Signature'] || hash == req.headers['x-chapa-signature']) {
+      logTrace('body is ', body, ColorEnums.BgCyan);
       const payment = await this.paymentServ.findOne({
         tx_ref: req.body.tx_ref,
       });
       if (!payment.ok) throw new HttpException(payment.errMessage, payment.code);
+      logTrace('payment is ', payment, ColorEnums.BgCyan);
 
-      if (payment.ok && payment.val.status === PaymentStatus.PENDING) {
-        const updatedResponse = await this.paymentServ.updateById(payment.val._id, {
-          timestamp: body.data.created_at,
+      if (payment?.ok && payment?.val?.status === PaymentStatus.PENDING) {
+        const updatedResponse = await this.paymentServ.updateById(payment?.val?._id, {
+          timestamp: body?.data?.created_at,
           status: PaymentStatus.SUCCESS,
-          ...req.body.data,
-          charge: body.data.charge,
-          reference: body.data.reference,
-          created_at: body.data.created_at,
-          updated_at: body.data.created_at,
-          // event: response.data?.event,
+          ...req?.body?.data,
+          charge: body?.data?.charge,
+          reference: body?.data?.reference,
+          created_at: body?.data?.created_at,
+          updated_at: body?.data?.created_at,
+          // event: response?.data?.event,
         });
+
         logTrace('updatedResponse is ', updatedResponse, ColorEnums.BgCyan);
-        if (updatedResponse.ok) {
+
+        if (updatedResponse?.ok) {
           const bill = await this.billingServ.updateBillingStatus(
-            payment.val.uuid,
-            body.data.created_at,
-            req.body.tx_ref,
+            payment?.val?.uuid,
+            body?.data?.created_at,
+            req?.body?.tx_ref,
           );
           logTrace('bill is ', bill, ColorEnums.BgCyan);
         }
 
-        if (!updatedResponse.ok)
-          throw new HttpException(updatedResponse.errMessage, updatedResponse.code);
-        return this.paymentServ.updateUsersPaymentStatus(updatedResponse.val.userId);
+        if (!updatedResponse?.ok)
+          throw new HttpException(updatedResponse?.errMessage, updatedResponse?.code);
+
+        return this.paymentServ.updateUsersPaymentStatus(updatedResponse?.val?.userId);
       } else {
         logTrace('payment is ', payment.val.status);
         return;
