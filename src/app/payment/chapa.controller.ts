@@ -108,7 +108,7 @@ export class ChapaController {
       });
 
       if (updatedResponse.ok) {
-        this.billingServ.updateBillingStatus(payment.val.uuid, response.data.updated_at, tx);
+        this.billingServ.updateBillingStatus(payment.val.uuid, response.data.created_at, tx);
       }
 
       if (!updatedResponse.ok)
@@ -135,7 +135,7 @@ export class ChapaController {
 
       if (payment.ok && payment.val.status === PaymentStatus.PENDING) {
         const updatedResponse = await this.paymentServ.updateById(payment.val._id, {
-          timestamp: body.data.updated_at,
+          timestamp: body.data.created_at,
           status: PaymentStatus.SUCCESS,
           ...req.body.data,
           charge: body.data.charge,
@@ -148,7 +148,7 @@ export class ChapaController {
         if (updatedResponse.ok) {
           const bill = await this.billingServ.updateBillingStatus(
             payment.val.uuid,
-            body.data.updated_at,
+            body.data.created_at,
             req.body.tx_ref,
           );
           logTrace('bill is ', bill, ColorEnums.BgCyan);
