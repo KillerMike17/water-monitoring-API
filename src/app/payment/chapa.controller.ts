@@ -144,13 +144,14 @@ export class ChapaController {
           updated_at: body.data.created_at,
           // event: response.data?.event,
         });
-
+        logTrace('updatedResponse is ', updatedResponse, ColorEnums.BgCyan);
         if (updatedResponse.ok) {
-          this.billingServ.updateBillingStatus(
+          const bill = await this.billingServ.updateBillingStatus(
             payment.val.uuid,
             body.data.updated_at,
             req.body.tx_ref,
           );
+          logTrace('bill is ', bill, ColorEnums.BgCyan);
         }
 
         if (!updatedResponse.ok)
