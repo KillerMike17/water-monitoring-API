@@ -69,6 +69,9 @@ export class BasePayment {
   @Prop({ type: String })
   phone_number?: string;
 
+  @Prop({ type: String })
+  timestamp?: string;
+
   @Prop({
     type: String,
     enum: Object.values(PaymentMadeBy),

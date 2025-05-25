@@ -19,6 +19,9 @@ export class Billing {
   refNo?: string;
 
   @Prop({ type: String })
+  tx_ref?: string;
+
+  @Prop({ type: String })
   uuid?: string;
 
   @IsNotEmpty()

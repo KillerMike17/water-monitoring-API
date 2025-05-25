@@ -1,7 +1,13 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 
-import { Payment, PaymentBill, PaymentDocument, PaymentDto, PaymentStatus } from './payment.entity';
+import {
+  BasePayment,
+  Payment,
+  PaymentBill,
+  PaymentDocument,
+  PaymentStatus,
+} from './payment.entity';
 
 import { MongoGenericRepository } from '@/providers/database/base/mongo.base.repo';
 import mongoose, { Model } from 'mongoose';
@@ -88,6 +94,25 @@ export class paymentService extends MongoGenericRepository<Payment> {
         errMessage: err.message,
         code: 500,
       };
+    }
+  }
+
+  async getPaymentHistory(uuid: string): Promise<Resp<BasePayment[]>> {
+    try {
+      const payments = await this.getAll({ uuid });
+      if (!payments.ok) {
+        return {
+          ok: false,
+          val: [],
+          error: payments.error,
+          errMessage: payments.errMessage,
+          code: payments.code,
+        };
+      }
+      return payments;
+    } catch (err) {
+      console.error('getPaymentHistory error:', err);
+      return { ok: false, val: [], error: err, errMessage: err.message, code: 500 };
     }
   }
 

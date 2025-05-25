@@ -20,6 +20,7 @@ import {
   PaymentInput,
 } from './payment.entity';
 import { paymentService } from './payment.service';
+import { billingService } from '../monitoring/billing/billing.service';
 
 @ApiTags(Endpoint.Payment)
 @Controller(Endpoint.Payment)
@@ -27,6 +28,7 @@ export class ChapaController {
   constructor(
     private readonly chapaService: ChapaService,
     private readonly paymentServ: paymentService,
+    private readonly billingServ: billingService,
   ) {}
 
   @Post('chapa')
@@ -96,6 +98,7 @@ export class ChapaController {
     if (response.status === 'success' && payment.val.status === PaymentStatus.PENDING) {
       const updatedResponse = await this.paymentServ.updateById(payment.val._id, {
         ...response.data,
+        timestamp: response.data.updated_at,
         status: PaymentStatus.SUCCESS,
         charge: response.data.charge,
         reference: response.data.reference,
@@ -103,6 +106,11 @@ export class ChapaController {
         updated_at: response.data.updated_at,
         // event: response.data?.event,
       });
+
+      if (updatedResponse.ok) {
+        this.billingServ.updateBillingStatus(payment.val.uuid, response.data.updated_at, tx);
+      }
+
       if (!updatedResponse.ok)
         throw new HttpException(updatedResponse.errMessage, updatedResponse.code);
       return this.paymentServ.updateUsersPaymentStatus(updatedResponse.val.userId);

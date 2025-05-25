@@ -70,6 +70,16 @@ export class PaymentsController {
     return res.val;
   }
 
+  @Get('info/:id')
+  async getPaymentInfo(@Param('id') uuid: string) {
+    return this.paymentService.getPaymentData(uuid);
+  }
+
+  @Get('history/:id')
+  async getPaymentHistory(@Param('id') uuid: string) {
+    return this.paymentService.getPaymentHistory(uuid);
+  }
+
   @Get(':id')
   @UseGuards(JwtGuard)
   async findOne(@Param('id') id: string) {
