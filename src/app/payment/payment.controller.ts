@@ -76,8 +76,8 @@ export class PaymentsController {
   }
 
   @Get('history/:id')
-  async getPaymentHistory(@Param('id') uuid: string) {
-    return this.paymentService.getPaymentHistory(uuid);
+  async getPaymentHistory(@Param('id') id: string) {
+    return this.paymentService.getPaymentHistory(id);
   }
 
   @Get(':id')

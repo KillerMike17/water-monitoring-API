@@ -98,9 +98,9 @@ export class paymentService extends MongoGenericRepository<Payment> {
     }
   }
 
-  async getPaymentHistory(uuid: string): Promise<Resp<BasePayment[]>> {
+  async getPaymentHistory(id: string): Promise<Resp<BasePayment[]>> {
     try {
-      const payments = await this.getAll({ uuid });
+      const payments = await this.getAll({ userId: id });
       if (!payments.ok) {
         return {
           ok: false,
