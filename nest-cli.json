@@ -10,5 +10,14 @@
     "plugins": [
       "@nestjs/swagger"
     ]
-  }
+  },
+  "plugins": [
+    {
+      "name": "@nestjs/swagger",
+      "options": {
+        "classValidator": true,
+        "introspectComments": true
+      }
+    }
+  ]
 }
