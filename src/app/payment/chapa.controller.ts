@@ -74,11 +74,11 @@ export class ChapaController {
   }
 
   @Post('verify/:tx')
-  @UseGuards(JwtGuard)
-  @Roles(RoleType.ADMIN, RoleType.Customer)
+  // @UseGuards(JwtGuard)
+  // @Roles(RoleType.ADMIN, RoleType.Customer)
   async verify(@Req() req: Request, @Param('tx') tx: string) {
     const inputQuery = { tx_ref: tx };
-    const user: UserFromToken = req['user'];
+    // const user: UserFromToken = req['user'];
     // if (user.role != RoleType.ADMIN) {
     //   inputQuery['parentId'] = user._id;
     // }
